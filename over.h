@@ -1,5 +1,4 @@
-#ifndef OVER_H
-#define OVER_H
+#pragma once
 
 #include <QDialog>
 
@@ -24,5 +23,3 @@ signals:
 private:
     Ui::Over *ui;
 };
-
-#endif // OVER_H

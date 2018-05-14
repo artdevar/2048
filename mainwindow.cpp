@@ -1,29 +1,21 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "finish.h"
-#include "over.h"
-#include <QKeyEvent>
-#include <time.h>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     ui->tableWidget->setDisabled(true);
-    this->fill();
-    this->create(); 
-    this->create();
+    this->on_actionNew_Game_triggered();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent * event)
 {
     bool created = false;
-    bool moved = false;
     bool merged = false;
+    bool moved = this->move_items(event->key());
     switch(event->key())
     {
     case Qt::Key_Down:
         {
-            moved = this->move_items(event->key());
             for(int i = size - 1; i >= 0; --i)
             {
                 for(int j = size - 1; j >= 0; --j)
@@ -39,12 +31,10 @@ void MainWindow::keyPressEvent(QKeyEvent * event)
                     }
                 }
             }
-            this->move_items(event->key());
             break;
         }
     case Qt::Key_Up:
         {
-            moved = this->move_items(event->key());
             for(int i = 0; i < size; ++i)
             {
                 for(int j = 0; j < size; ++j)
@@ -60,12 +50,10 @@ void MainWindow::keyPressEvent(QKeyEvent * event)
                     }
                 }
             }
-            this->move_items(event->key());
             break;
         }
     case Qt::Key_Left:
         {
-            moved = this->move_items(event->key());
             for(int i = 0; i < size; ++i)
             {
                for(int j = 0; j < size; ++j)
@@ -81,12 +69,10 @@ void MainWindow::keyPressEvent(QKeyEvent * event)
                     }
                 }
             }
-            this->move_items(event->key());
             break;
         }
     case Qt::Key_Right:
         {
-            moved = this->move_items(event->key());
             for(int i = size - 1; i >= 0; --i)
             {
                 for(int j = size - 1; j >= 0; --j)
@@ -102,17 +88,17 @@ void MainWindow::keyPressEvent(QKeyEvent * event)
                     }
                 }
             }
-            this->move_items(event->key());
         }
+    }
+    this->move_items(event->key());
+    if(merged) 
+    {    
+        ui->statusBar->showMessage("Score: " + QString::number(score));
     }
     if(moved || merged)
     {
         this->create();
         created = true;
-    }
-    if(merged) 
-    {
-        ui->statusBar->showMessage("Score: " + QString::number(score));
     }
     if(!created)
     {
@@ -122,14 +108,12 @@ void MainWindow::keyPressEvent(QKeyEvent * event)
 
 void MainWindow::create()
 {
-    srand(time(NULL));
-    int x = rand() % size;
-    int y = rand() % size;
-    while(!this->empty_space(x, y))
+    int x, y;
+    do
     {
-        x = rand() % size;
-        y = rand() % size;
-    }
+        x = rand()% size;
+        y = rand()% size;
+    } while(!this->empty_space(x, y));
     if(rand() % 100 >= 10)
     {
        this->get_curr_item(x,y)->setData(Qt::UserRole, 2);
@@ -138,14 +122,14 @@ void MainWindow::create()
     {
        this->get_curr_item(x,y)->setData(Qt::UserRole, 4);
     }
-    this->check_color(this->get_curr_item(x, y));
     this->get_curr_item(x, y)->setText(ui->tableWidget->item(x,y)->data(Qt::UserRole).toString());
+    this->check_color(this->get_curr_item(x, y));
 }
 
 void MainWindow::on_actionNew_Game_triggered()
 {
     ui->tableWidget->clear();
-    this->statusBar()->clearMessage();
+    this->statusBar()->showMessage("Score: 0");
     this->score = 0;
     this->finish = false;
     this->fill();
@@ -180,6 +164,7 @@ void MainWindow::move_item(QTableWidgetItem * item, const int row, const int col
     ui->tableWidget->item(row, column)->setBackgroundColor(item->backgroundColor());
     ui->tableWidget->item(row, column)->setTextColor(item->textColor());
     ui->tableWidget->item(row, column)->setText(item->text());
+    ui->tableWidget->item(row, column)->setFont(item->font());
 }
 
 bool MainWindow::move_items(const int event)
@@ -197,7 +182,7 @@ bool MainWindow::move_items(const int event)
                     {
                         int pos = size - 1;
                         while(pos >= 0 && !this->empty_space(pos, j)){--pos;}
-                        if(pos <= -1 || pos <= i) continue;
+                        if(pos <= i) continue;
                         this->move_item(this->get_curr_item(i, j), pos, j);
                         this->clear_item(this->get_curr_item(i, j));
                         moved = true;
@@ -216,7 +201,7 @@ bool MainWindow::move_items(const int event)
                     {
                         int pos = 0;
                         while(pos < size && !this->empty_space(pos, j)){++pos;}
-                        if(pos >= size || pos >= i) continue;
+                        if(pos >= i) continue;
                         this->move_item(this->get_curr_item(i, j), pos, j);
                         this->clear_item(this->get_curr_item(i, j));
                         moved = true;
@@ -235,7 +220,7 @@ bool MainWindow::move_items(const int event)
                     {
                         int pos = 0;
                         while(pos < size && !this->empty_space(i, pos)){++pos;}
-                        if(pos >= size || pos >= j) continue;
+                        if(pos >= j) continue;
                         this->move_item(this->get_curr_item(i, j), i, pos);
                         this->clear_item(this->get_curr_item(i, j));
                         moved = true;
@@ -254,7 +239,7 @@ bool MainWindow::move_items(const int event)
                     {
                         int pos = size - 1;
                         while(pos >= 0 && !this->empty_space(i, pos)){--pos;}
-                        if(pos <= -1 || pos <= j) continue;
+                        if(pos <= j) continue;
                         this->move_item(this->get_curr_item(i, j), i, pos);
                         this->clear_item(this->get_curr_item(i, j));
                         moved = true;
@@ -268,6 +253,7 @@ bool MainWindow::move_items(const int event)
 
 void MainWindow::check_color(QTableWidgetItem * item)
 {
+    item->setFont(QFont("Clear Sans", 30));
     int data_temp = item->data(Qt::UserRole).toInt();
     switch(data_temp)
     {
@@ -315,31 +301,31 @@ void MainWindow::check_color(QTableWidgetItem * item)
     case 128:
         {
             item->setBackgroundColor(QColor(242, 204, 102));
-            item->setFont(QFont("Clear Sans", 27));
+            item->setFont(QFont("Clear Sans", 26));
             break;
         }
     case 256:
         {
             item->setBackgroundColor(QColor(240, 195, 78));
-            item->setFont(QFont("Clear Sans", 27));
+            item->setFont(QFont("Clear Sans", 26));
             break;
         }
     case 512:
         {
             item->setBackgroundColor(QColor(242, 192, 61));
-            item->setFont(QFont("Clear Sans", 27));
+            item->setFont(QFont("Clear Sans", 26));
             break;
         }
     case 1024:
         {
             item->setBackgroundColor(QColor(242, 189, 51));
-            item->setFont(QFont("Clear Sans", 25));
+            item->setFont(QFont("Clear Sans", 23));
             break;
         }
     case 2048:
         {
             item->setBackgroundColor(QColor(242, 182, 49));
-            item->setFont(QFont("Clear Sans", 25));
+            item->setFont(QFont("Clear Sans", 23));
             if(!finish)
             {
                 finish = true;
@@ -350,19 +336,20 @@ void MainWindow::check_color(QTableWidgetItem * item)
             break;
         }
     default:
-    {
-        item->setBackgroundColor(QColor(41, 39, 27));
-        item->setFont(QFont("Clear Sans", 20));
-    }
+        {
+            item->setBackgroundColor(QColor(41, 39, 27));
+            item->setFont(QFont("Clear Sans", 21));
+        }
     }
 }
 
 void MainWindow::merge_items(QTableWidgetItem * res)
 {
+    qRegisterMetaType<QVector<int>>("QVector<int>");
     res->setData(Qt::UserRole, res->data(Qt::UserRole).toInt() * 2);
     res->setText(res->data(Qt::UserRole).toString());
-    this->check_color(res);
     score += res->data(Qt::UserRole).toInt();
+    this->check_color(res);
 }
 
 void MainWindow::check_over() const
@@ -378,28 +365,28 @@ void MainWindow::check_over() const
         }
     }
     for(int i = 0; i < size; ++i)
+    {
+        for(int j = 0; j < size; ++j)
         {
-            for(int j = 0; j < size; ++j)
+            int temp_data = this->get_data_item(i, j);
+            if(i < size - 2 && temp_data == this->get_data_item(i + 1, j))
             {
-                int temp_data = this->get_data_item(i, j);
-                if(i < size - 2 && temp_data == this->get_data_item(i + 1, j))
-                {
-                    return;
-                }
-                if(i > 0 && temp_data == this->get_data_item(i - 1, j))
-                {
-                    return;
-                }
-                if(j < size - 2 && temp_data == this->get_data_item(i, j + 1))
-                {
-                    return;
-                }
-                if(j > 0 && temp_data == this->get_data_item(i, j - 1))
-                {
-                    return;
-                }
+                return;
+            }
+            else if(i > 0 && temp_data == this->get_data_item(i - 1, j))
+            {
+                return;
+            }
+            else if(j < size - 2 && temp_data == this->get_data_item(i, j + 1))
+            {
+                return;
+            }
+            else if(j > 0 && temp_data == this->get_data_item(i, j - 1))
+            {
+                return;
             }
         }
+    }
     ui->tableWidget->setDisabled(true);
     Over * window = new Over(QString::number(score));
     window->show();

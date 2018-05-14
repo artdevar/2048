@@ -1,5 +1,4 @@
-#ifndef FINISH_H
-#define FINISH_H
+#pragma once
 
 #include <QDialog>
 
@@ -24,5 +23,3 @@ signals:
 private:
     Ui::Finish *ui;
 };
-
-#endif // FINISH_H

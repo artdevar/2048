@@ -25,9 +25,10 @@ color: rgb(230,230,230);</string>
       <property name="styleSheet">
        <string notr="true">QTableWidget 
 {
-	font: 700 30pt &quot;Clear Sans&quot;;
+	font: 1000 28pt &quot;Clear Sans&quot;;
     gridline-color: rgb(187, 173, 160);
 	background-color: rgb(204, 192, 179);
+	
 }
 </string>
       </property>

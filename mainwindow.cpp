@@ -345,7 +345,6 @@ void MainWindow::check_color(QTableWidgetItem * item)
 
 void MainWindow::merge_items(QTableWidgetItem * res)
 {
-    qRegisterMetaType<QVector<int>>("QVector<int>");
     res->setData(Qt::UserRole, res->data(Qt::UserRole).toInt() * 2);
     res->setText(res->data(Qt::UserRole).toString());
     score += res->data(Qt::UserRole).toInt();

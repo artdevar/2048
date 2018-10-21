@@ -2,8 +2,9 @@
 
 #include <QDialog>
 
-namespace Ui {
-class Finish;
+namespace Ui 
+{
+    class Finish;
 }
 
 class Finish : public QDialog
@@ -11,7 +12,7 @@ class Finish : public QDialog
     Q_OBJECT
     
 public:
-    explicit Finish(const QString & str, QWidget *parent = 0);
+    explicit Finish(uint64_t score, QWidget * parent = nullptr);
     ~Finish();
     
 private slots:

@@ -2,8 +2,9 @@
 
 #include <QDialog>
 
-namespace Ui {
-class Over;
+namespace Ui 
+{
+    class Over;
 }
 
 class Over : public QDialog
@@ -11,7 +12,7 @@ class Over : public QDialog
     Q_OBJECT
     
 public:
-    explicit Over(const QString & str, QWidget *parent = 0);
+    explicit Over(uint64_t score, QWidget *parent = nullptr);
     ~Over();
     
 private slots:

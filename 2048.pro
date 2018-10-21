@@ -1,9 +1,3 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2018-03-26T14:47:05
-#
-#-------------------------------------------------
-
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -26,15 +20,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    finish.cpp \
-    over.cpp
+        finish.cpp \
+        over.cpp
 
 HEADERS += \
         mainwindow.h \
-    finish.h \
-    over.h
+        finish.h \
+        over.h
 
 FORMS += \
         mainwindow.ui \
-    finish.ui \
-    over.ui
+        finish.ui \
+        over.ui
